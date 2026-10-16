@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FAQS } from '../data/eventData'
+import SparkleStar from './SparkleStar'
 
 /**
  * FAQ Section: Accessible collapsible accordion with smooth CSS grid expansion.
@@ -13,8 +14,22 @@ export default function Faq() {
 
   return (
     <section id="faq" className="max-w-3xl mx-auto px-4 py-16 sm:py-24 reveal">
-      <div className="text-center mb-10">
-        <h2 className="display text-3xl sm:text-5xl text-[var(--gold)]">Frequently Asked Questions</h2>
+      <div className="text-center mb-10 relative">
+        <SparkleStar
+          size={16}
+          delay={0.9}
+          color="var(--accent1)"
+          className="absolute -top-3 left-1/4 hidden sm:inline-block"
+        />
+        <h2 className="display headline-shimmer text-3xl sm:text-5xl text-[var(--accent1)]">
+          Frequently Asked Questions
+        </h2>
+        <SparkleStar
+          size={14}
+          delay={2.0}
+          color="var(--accent2)"
+          className="absolute -top-1 right-1/4 hidden sm:inline-block"
+        />
         <p className="text-sm sm:text-base opacity-75 mt-2 max-w-lg mx-auto">
           Common queries regarding eligibility, fees, accommodation, and equipment rules.
         </p>

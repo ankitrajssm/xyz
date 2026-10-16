@@ -1,16 +1,31 @@
 import { CATS, EVENTS } from '../data/eventData'
+import SparkleStar from './SparkleStar'
 
 /**
  * Activities Section: 4 Core festival tracks.
- * High polish, clear track descriptions, and direct links to each featured event detail view.
- * Features quick-add bookmarking into My Plan.
+ * High polish, clear track descriptions, shimmering header, and direct links to each featured event detail view.
+ * Features quick-add bookmarking into My Plan with star pop.
  */
 export default function Activities({ onSelectEvent, isPlanned, onTogglePlan }) {
   return (
     <section id="activities" className="max-w-6xl mx-auto px-4 py-16 sm:py-24 reveal">
-      {/* Section Header */}
-      <div className="text-center mb-12">
-        <h2 className="display text-3xl sm:text-5xl text-[var(--gold)]">Festival Tracks</h2>
+      {/* Section Header with Shimmer & Twinkle Star */}
+      <div className="text-center mb-12 relative">
+        <SparkleStar
+          size={18}
+          delay={0.8}
+          color="var(--accent1)"
+          className="absolute -top-3 left-1/3 hidden sm:inline-block"
+        />
+        <h2 className="display headline-shimmer text-3xl sm:text-5xl text-[var(--accent1)]">
+          Festival Tracks
+        </h2>
+        <SparkleStar
+          size={14}
+          delay={2.2}
+          color="var(--accent2)"
+          className="absolute -top-1 right-1/3 hidden sm:inline-block"
+        />
         <p className="text-sm sm:text-base opacity-75 mt-2 max-w-xl mx-auto">
           Four distinct categories spanning code, combat robotics, esports, live music, and performing arts. Cross-track participation is welcome.
         </p>
@@ -30,7 +45,7 @@ export default function Activities({ onSelectEvent, isPlanned, onTogglePlan }) {
                 <div className="text-4xl mb-3" aria-hidden="true">
                   {category.icon}
                 </div>
-                <h3 className="display text-2xl text-[var(--gold)]">
+                <h3 className="display text-2xl text-[var(--accent1)]">
                   {category.name}
                 </h3>
                 <p className="text-sm opacity-75 mt-2 leading-relaxed">
@@ -39,7 +54,7 @@ export default function Activities({ onSelectEvent, isPlanned, onTogglePlan }) {
 
                 {/* Sub-list of events in this track */}
                 <div className="mt-4 pt-4 border-t border-white/10 space-y-1.5">
-                  <div className="text-[11px] uppercase tracking-wider text-[var(--teal)] font-bold mb-2">
+                  <div className="text-[11px] uppercase tracking-wider text-[var(--accent3)] font-bold mb-2">
                     Featured Events
                   </div>
                   {trackEvents.map(event => {
@@ -52,7 +67,7 @@ export default function Activities({ onSelectEvent, isPlanned, onTogglePlan }) {
                       >
                         <button
                           onClick={() => onSelectEvent && onSelectEvent(event.id)}
-                          className="text-left flex-1 text-xs opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors truncate cursor-pointer"
+                          className="text-left flex-1 text-xs opacity-80 hover:opacity-100 hover:text-[var(--accent1)] transition-colors truncate cursor-pointer"
                           aria-label={`View rules and details for ${event.title}`}
                         >
                           • {event.title}
@@ -63,8 +78,8 @@ export default function Activities({ onSelectEvent, isPlanned, onTogglePlan }) {
                           onClick={() => onTogglePlan && onTogglePlan(event.id)}
                           className={`p-1 rounded text-xs transition-colors cursor-pointer shrink-0 ${
                             saved
-                              ? 'text-[var(--gold)] font-bold'
-                              : 'text-white/30 hover:text-[var(--gold)]'
+                              ? 'text-[var(--accent1)] font-bold star-pop'
+                              : 'text-white/30 hover:text-[var(--accent1)]'
                           }`}
                           aria-label={saved ? `Remove ${event.title} from My Plan` : `Add ${event.title} to My Plan`}
                           title={saved ? 'Remove from My Plan' : 'Save to My Plan'}
@@ -77,7 +92,7 @@ export default function Activities({ onSelectEvent, isPlanned, onTogglePlan }) {
                 </div>
               </div>
 
-              <div className="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-[var(--teal)] font-semibold">
+              <div className="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-[var(--accent3)] font-semibold">
                 <span>{trackEvents.length} Events Total</span>
                 <span className="opacity-60">Day {trackEvents.map(e => e.day).sort().filter((v, i, a) => a.indexOf(v) === i).join(', ')}</span>
               </div>

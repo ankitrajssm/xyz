@@ -1,24 +1,95 @@
 @import "tailwindcss";
 
-:root {
-  --ink: #120b2e;
-  --gold: #ffb627;
-  --red: #e5446d;
-  --teal: #2ec4b6;
-  --cream: #fff4e0;
-  --ambient: #2ec4b6;
-  --ambient-rgb: 46, 196, 182;
+/* -------------------------------------------------------------
+   THEME DEFINITIONS: Marigold Night (Default), Neon Mela, Sunset Rangoli
+   Strict WCAG AA contrast maintained across all 3 color schemes.
+   ------------------------------------------------------------- */
+:root,
+[data-theme="marigold"] {
+  --bg: #120b2e;
+  --surface: #1a103c;
+  --text: #fff4e0;
+  --muted: #a39bc2;
+  --accent1: #ffb627; /* Marigold Gold */
+  --accent2: #e5446d; /* Coral Red */
+  --accent3: #2ec4b6; /* Teal */
+  --border: rgba(255, 244, 224, 0.12);
+
+  --bg-rgb: 18, 11, 46;
+  --surface-rgb: 26, 16, 60;
+  --accent1-rgb: 255, 182, 39;
+  --accent2-rgb: 229, 68, 109;
+  --accent3-rgb: 46, 196, 182;
+
+  /* Aliases for backwards compatibility */
+  --ink: var(--bg);
+  --cream: var(--text);
+  --gold: var(--accent1);
+  --red: var(--accent2);
+  --teal: var(--accent3);
+  --ambient: var(--accent3);
+  --ambient-rgb: var(--accent3-rgb);
+}
+
+[data-theme="neon"] {
+  --bg: #090514;
+  --surface: #140b29;
+  --text: #f8fafc;
+  --muted: #9f8fc2;
+  --accent1: #00f0ff; /* Electric Cyan */
+  --accent2: #ff1389; /* Electric Magenta */
+  --accent3: #38ef7d; /* Electric Lime */
+  --border: rgba(0, 240, 255, 0.16);
+
+  --bg-rgb: 9, 5, 20;
+  --surface-rgb: 20, 11, 41;
+  --accent1-rgb: 0, 240, 255;
+  --accent2-rgb: 255, 19, 137;
+  --accent3-rgb: 56, 239, 125;
+
+  --ink: var(--bg);
+  --cream: var(--text);
+  --gold: var(--accent1);
+  --red: var(--accent2);
+  --teal: var(--accent3);
+  --ambient: var(--accent1);
+  --ambient-rgb: var(--accent1-rgb);
+}
+
+[data-theme="sunset"] {
+  --bg: #1a070e; /* Warm Dark Maroon */
+  --surface: #2b0d18;
+  --text: #fff3e6;
+  --muted: #c79ba5;
+  --accent1: #ff9f1c; /* Saffron */
+  --accent2: #f25c78; /* Vibrant Rose */
+  --accent3: #20b2aa; /* Turquoise */
+  --border: rgba(255, 159, 28, 0.16);
+
+  --bg-rgb: 26, 7, 14;
+  --surface-rgb: 43, 13, 24;
+  --accent1-rgb: 255, 159, 28;
+  --accent2-rgb: 242, 92, 120;
+  --accent3-rgb: 32, 178, 170;
+
+  --ink: var(--bg);
+  --cream: var(--text);
+  --gold: var(--accent1);
+  --red: var(--accent2);
+  --teal: var(--accent3);
+  --ambient: var(--accent3);
+  --ambient-rgb: var(--accent3-rgb);
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: var(--ink);
+  background-color: var(--bg);
 }
 
 body {
   margin: 0;
-  background-color: var(--ink);
-  color: var(--cream);
+  background-color: var(--bg);
+  color: var(--text);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -33,22 +104,186 @@ body {
 }
 
 .headline {
-  color: var(--gold);
-  text-shadow: 4px 4px 0 var(--red);
+  color: var(--accent1);
+  text-shadow: 4px 4px 0 var(--accent2);
 }
 
-/* Base interactive card style - quiet, consistent, hardware accelerated */
+/* Shimmering gradient sweep on Hero and section titles */
+.headline-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--accent1) 0%,
+    var(--accent2) 28%,
+    var(--accent1) 50%,
+    var(--accent3) 78%,
+    var(--accent1) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerSweep 9s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes shimmerSweep {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Star sparkle twinkling */
+.twinkle-star {
+  animation: starTwinkle 3.2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    transform: scale(0.35) rotate(0deg);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.15) rotate(45deg);
+    opacity: 0.95;
+  }
+}
+
+/* Base interactive card style - smooth lift, accent glow & press effect */
 .card {
-  background: rgba(255, 244, 224, 0.05);
-  border: 1px solid rgba(255, 244, 224, 0.12);
+  background: rgba(var(--surface-rgb), 0.55);
+  border: 1px solid var(--border);
   border-radius: 0.85rem;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease;
   will-change: transform;
 }
 
 .card:hover {
-  border-color: var(--gold);
+  border-color: var(--accent1);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px -6px rgba(var(--accent1-rgb), 0.18);
+}
+
+/* Button & interactive press effect (scale 0.96 on press) */
+button:active:not(:disabled),
+.card:active,
+[role="button"]:active {
+  transform: scale(0.96);
+  transition: transform 0.08s ease;
+}
+
+/* Primary Button with Light Shimmer sweep on hover */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -70%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.btn-shimmer:hover::after {
+  transform: rotate(25deg) translateX(420%);
+}
+
+/* Click ripple animation */
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.32);
+  transform: scale(0);
+  animation: rippleEffect 0.52s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes rippleEffect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Star bookmark celebratory pop and rotate */
+.star-pop {
+  animation: starPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes starPop {
+  0% { transform: scale(0.9); }
+  45% { transform: scale(1.38) rotate(22deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Schedule card staggered enter animation on filter change */
+.card-stagger-in {
+  animation: cardFadeUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--stagger-index, 0) * 45ms);
+}
+
+@keyframes cardFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Countdown digit slide transition */
+.digit-slide {
+  display: inline-block;
+  animation: digitSlide 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes digitSlide {
+  from {
+    opacity: 0.15;
+    transform: translateY(-28%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Navbar link sliding underline */
+.nav-link-slide {
+  position: relative;
+}
+
+.nav-link-slide::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent1);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link-slide:hover::after,
+.nav-link-slide:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 /* Scroll reveal states - opacity and transform only */
@@ -210,7 +445,7 @@ body {
 
 /* Subtle translucent card enhancement when ambient mode is active */
 [data-ambient="true"] .card {
-  background: rgba(255, 244, 224, 0.045);
+  background: rgba(var(--surface-rgb), 0.55);
   backdrop-filter: blur(8px);
 }
 
@@ -219,8 +454,26 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid var(--teal);
+  outline: 3px solid var(--accent3);
   outline-offset: 2px;
+}
+
+/* Effects disabled overrides */
+[data-effects="false"] .headline-shimmer {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: var(--accent1) !important;
+  color: var(--accent1) !important;
+  animation: none !important;
+}
+
+[data-effects="false"] .twinkle-star,
+[data-effects="false"] .btn-shimmer::after,
+[data-effects="false"] .ripple-wave,
+[data-effects="false"] .star-pop {
+  display: none !important;
+  animation: none !important;
 }
 
 /* Reduced motion support */
@@ -247,9 +500,28 @@ select:focus-visible {
   .animate-in,
   .ambient-blob-1,
   .ambient-blob-2,
-  .ambient-blob-3 {
+  .ambient-blob-3,
+  .headline-shimmer,
+  .twinkle-star,
+  .star-pop,
+  .digit-slide,
+  .card-stagger-in {
     animation: none !important;
     transform: none !important;
+  }
+
+  .headline-shimmer {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: var(--accent1) !important;
+    color: var(--accent1) !important;
+  }
+
+  .btn-shimmer::after,
+  .ripple-wave,
+  .twinkle-star {
+    display: none !important;
   }
 }
 

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { EVENTS, HOW_TO_PARTICIPATE } from '../data/eventData'
+import PetalBurst from './PetalBurst'
+import SparkleStar from './SparkleStar'
 
 /**
  * Registration & Participation Section.
@@ -89,9 +91,23 @@ export default function Register({ preSelectedEventTitle }) {
 
   return (
     <section id="register" className="max-w-4xl mx-auto px-4 py-16 sm:py-24 reveal">
-      {/* Section Header */}
-      <div className="text-center mb-12">
-        <h2 className="display text-3xl sm:text-5xl text-[var(--gold)]">Participation & Registration</h2>
+      {/* Section Header with Shimmer & Twinkle Stars */}
+      <div className="text-center mb-12 relative">
+        <SparkleStar
+          size={18}
+          delay={0.6}
+          color="var(--accent1)"
+          className="absolute -top-3 left-1/4 hidden sm:inline-block"
+        />
+        <h2 className="display headline-shimmer text-3xl sm:text-5xl text-[var(--accent1)]">
+          Participation & Registration
+        </h2>
+        <SparkleStar
+          size={14}
+          delay={1.9}
+          color="var(--accent2)"
+          className="absolute -top-2 right-1/4 hidden sm:inline-block"
+        />
         <p className="text-sm sm:text-base opacity-75 mt-2 max-w-xl mx-auto">
           Free entry for all eligible college and university students. Register in one minute to secure your slot.
         </p>
@@ -135,10 +151,13 @@ export default function Register({ preSelectedEventTitle }) {
       {/* Registration Card: Form or Confirmation Card */}
       {isSubmitted && confirmationData ? (
         <div
-          className="card max-w-xl mx-auto p-8 sm:p-10 text-center border-[var(--teal)]"
+          className="card relative overflow-hidden max-w-xl mx-auto p-8 sm:p-10 text-center border-[var(--teal)]"
           role="status"
           aria-live="polite"
         >
+          {/* Swirling Celebratory Marigold Petal Burst (2.5 seconds) */}
+          <PetalBurst durationMs={2500} />
+
           <div className="text-5xl mb-3" aria-hidden="true">🎉</div>
           <div className="text-xs uppercase font-bold tracking-wider text-[var(--teal)] mb-1">
             Registration Confirmed
@@ -298,7 +317,7 @@ export default function Register({ preSelectedEventTitle }) {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-base mt-2 cursor-pointer shadow-md"
+            className="btn-shimmer w-full py-3.5 rounded-full font-bold bg-[var(--accent1)] text-[var(--bg)] hover:brightness-105 transition-all text-base mt-2 cursor-pointer shadow-md"
           >
             Complete Free Registration
           </button>

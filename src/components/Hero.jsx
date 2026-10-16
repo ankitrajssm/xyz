@@ -1,9 +1,11 @@
 import { EVENT } from '../data/eventData'
 import Countdown from './Countdown'
+import SparkleStar from './SparkleStar'
 
 /**
  * Hero Section
- * Memorable centerpiece: Staggered TARANG'26 title drop over a rich rotating geometric rangoli mandala.
+ * Memorable centerpiece: Staggered TARANG'26 title drop with shimmering gradient sweep,
+ * twinkling 4-point star sparkles, and rotating geometric rangoli mandala.
  * Uses only CSS transform/opacity for lightweight 60fps rendering.
  */
 export default function Hero() {
@@ -35,7 +37,7 @@ export default function Hero() {
               width="180"
               height="180"
               transform={`rotate(${i * 11.25})`}
-              stroke={i % 2 === 0 ? 'var(--gold)' : 'var(--red)'}
+              stroke={i % 2 === 0 ? 'var(--accent1)' : 'var(--accent2)'}
               strokeDasharray={i % 3 === 0 ? '3 3' : 'none'}
             />
           ))}
@@ -47,7 +49,7 @@ export default function Hero() {
               cx={65 * Math.cos((i * Math.PI) / 6)}
               cy={65 * Math.sin((i * Math.PI) / 6)}
               r="38"
-              stroke="var(--teal)"
+              stroke="var(--accent3)"
               opacity="0.6"
             />
           ))}
@@ -55,7 +57,7 @@ export default function Hero() {
           {/* Outer perimeter star polygon */}
           <polygon
             points="0,-140 35,-110 99,-99 110,-35 140,0 110,35 99,99 35,110 0,140 -35,110 -99,99 -110,35 -140,0 -110,-35 -99,-99 -35,-110"
-            stroke="var(--gold)"
+            stroke="var(--accent1)"
             strokeWidth="1.2"
             opacity="0.8"
           />
@@ -76,43 +78,66 @@ export default function Hero() {
               rx="60"
               ry="22"
               transform={`rotate(${i * 22.5})`}
-              stroke="var(--gold)"
+              stroke="var(--accent1)"
             />
           ))}
-          <circle r="60" stroke="var(--red)" strokeWidth="0.8" />
-          <circle r="40" stroke="var(--teal)" strokeWidth="0.8" />
-          <circle r="20" stroke="var(--gold)" strokeWidth="1.2" />
+          <circle r="60" stroke="var(--accent2)" strokeWidth="0.8" />
+          <circle r="40" stroke="var(--accent3)" strokeWidth="0.8" />
+          <circle r="20" stroke="var(--accent1)" strokeWidth="1.2" />
         </svg>
       </div>
 
       {/* Hero Foreground Content */}
       <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
         {/* Date and Location Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm font-semibold text-[var(--teal)] mb-4">
-          <span className="w-2 h-2 rounded-full bg-[var(--teal)] inline-block" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm font-semibold text-[var(--accent3)] mb-4">
+          <span className="w-2 h-2 rounded-full bg-[var(--accent3)] inline-block" />
           <span>{EVENT.dates}</span>
           <span className="opacity-40">·</span>
           <span>{EVENT.address}</span>
         </div>
 
-        {/* Staggered Giant Festival Headline */}
-        <h1
-          className="display headline text-[18vw] sm:text-[9.5rem] md:text-[11.5rem] leading-[0.9] tracking-tight my-2"
-          aria-label={`${EVENT.name} ${EVENT.year}`}
-        >
-          {titleChars.map((ch, i) => (
-            <span
-              key={i}
-              className="drop"
-              style={{ animationDelay: `${i * 90}ms` }}
-            >
-              {ch}
-            </span>
-          ))}
-        </h1>
+        {/* Title Container with Twinkling Sparkles */}
+        <div className="relative my-2">
+          {/* Decorative Twinkling 4-point Stars */}
+          <SparkleStar
+            size={22}
+            delay={0.2}
+            color="var(--accent1)"
+            className="absolute -top-4 -left-6 sm:-left-12"
+          />
+          <SparkleStar
+            size={18}
+            delay={1.4}
+            color="var(--accent2)"
+            className="absolute -bottom-2 -right-4 sm:-right-10"
+          />
+          <SparkleStar
+            size={14}
+            delay={2.1}
+            color="var(--accent3)"
+            className="absolute top-2 -right-6 sm:-right-8"
+          />
+
+          {/* Staggered Giant Festival Headline with Shimmer Sweep */}
+          <h1
+            className="display headline headline-shimmer text-[18vw] sm:text-[9.5rem] md:text-[11.5rem] leading-[0.9] tracking-tight"
+            aria-label={`${EVENT.name} ${EVENT.year}`}
+          >
+            {titleChars.map((ch, i) => (
+              <span
+                key={i}
+                className="drop"
+                style={{ animationDelay: `${i * 90}ms` }}
+              >
+                {ch}
+              </span>
+            ))}
+          </h1>
+        </div>
 
         {/* Festival Tagline */}
-        <p className="text-base sm:text-2xl font-light text-[var(--cream)] opacity-90 max-w-2xl mt-4 mb-2">
+        <p className="text-base sm:text-2xl font-light text-[var(--text)] opacity-90 max-w-2xl mt-4 mb-2">
           {EVENT.tagline}
         </p>
         <p className="text-xs sm:text-sm opacity-60">
@@ -122,17 +147,17 @@ export default function Hero() {
         {/* Live Countdown */}
         <Countdown />
 
-        {/* Dual Primary & Secondary CTAs */}
+        {/* Dual Primary & Secondary CTAs with Light Shimmer sweep */}
         <div className="flex flex-wrap items-center justify-center gap-4 mt-2">
           <a
             href="#register"
-            className="inline-block px-8 py-3.5 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:-translate-y-0.5 transition-transform shadow-md"
+            className="btn-shimmer inline-block px-8 py-3.5 rounded-full font-bold bg-[var(--accent1)] text-[var(--bg)] hover:-translate-y-0.5 transition-transform shadow-md cursor-pointer"
           >
             Register Now · Free
           </a>
           <a
             href="#schedule"
-            className="inline-block px-7 py-3.5 rounded-full font-semibold border border-white/20 hover:border-[var(--gold)] text-[var(--cream)] hover:-translate-y-0.5 transition-transform"
+            className="inline-block px-7 py-3.5 rounded-full font-semibold border border-white/20 hover:border-[var(--accent1)] text-[var(--text)] hover:-translate-y-0.5 transition-transform cursor-pointer"
           >
             Explore Schedule
           </a>

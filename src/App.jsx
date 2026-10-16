@@ -4,8 +4,12 @@ import { useReveal } from './hooks/useReveal'
 import { useHashRoute } from './hooks/useHashRoute'
 import { useAmbient } from './hooks/useAmbient'
 import { usePlan } from './hooks/usePlan'
+import { useTheme } from './hooks/useTheme'
+import { useEffects } from './hooks/useEffects'
 import ScrollProgress from './components/ScrollProgress'
 import AmbientBackground from './components/AmbientBackground'
+import CursorGlow from './components/CursorGlow'
+import SparkBurst from './components/SparkBurst'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import StatsStrip from './components/StatsStrip'
@@ -23,9 +27,9 @@ import PlanDrawer from './components/PlanDrawer'
 
 /**
  * Main Tarang '26 Application Component.
- * Integrates Ambient Mode, My Plan itinerary drawer with clash detection,
- * hash routing (#/event/<id>), interactive festival sections,
- * doubt assistant, and accessible keyboard navigation.
+ * Integrates 3 Themes (Marigold Night, Neon Mela, Sunset Rangoli),
+ * Cursor trail effect, Click spark bursts, Ambient Mode,
+ * My Plan itinerary drawer with clash detection, and Ask Tarang.
  */
 export default function App() {
   const [preSelectedTitle, setPreSelectedTitle] = useState('')
@@ -36,6 +40,8 @@ export default function App() {
   const { activeEventId, openEvent, closeEvent } = useHashRoute()
   const { ambient, toggleAmbient } = useAmbient()
   const { plan, isPlanned, togglePlan, clearPlan } = usePlan()
+  const { theme, setTheme, themes } = useTheme()
+  const { effects, toggleEffects } = useEffects()
 
   // Viewport scroll reveal observer
   useReveal()
@@ -67,17 +73,28 @@ export default function App() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[var(--ink)] text-[var(--cream)] selection:bg-[var(--gold)] selection:text-[var(--ink)]">
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)] selection:bg-[var(--accent1)] selection:text-[var(--bg)]">
+      {/* Dynamic Cursor Glow & Trail (Desktop pointer: fine only) */}
+      <CursorGlow effects={effects} />
+
+      {/* Global Click Spark Burst & Ripple Wave */}
+      <SparkBurst effects={effects} />
+
       {/* 4-Layer Ambient Mode Background (Pointer events none, behind content) */}
       <AmbientBackground ambient={ambient} />
 
       {/* Top Scroll Indicator */}
       <ScrollProgress />
 
-      {/* Main Navigation with Ambient Toggle and My Plan counter */}
+      {/* Main Navigation with Theme Switcher, Effects Toggle, Ambient Toggle and My Plan counter */}
       <Navbar
         ambient={ambient}
         onToggleAmbient={toggleAmbient}
+        effects={effects}
+        onToggleEffects={toggleEffects}
+        theme={theme}
+        setTheme={setTheme}
+        themes={themes}
         planCount={plan.length}
         onOpenPlan={() => setIsPlanOpen(true)}
       />
@@ -87,14 +104,14 @@ export default function App() {
 
       {/* Festival Ribbon Ticker */}
       <div
-        className="overflow-hidden bg-[var(--gold)] text-[var(--ink)] py-3 select-none"
+        className="overflow-hidden bg-[var(--accent1)] text-[var(--bg)] py-3 select-none"
         aria-hidden="true"
       >
         <div className="marquee-track display text-base sm:text-lg font-bold tracking-wide">
           {[...tickerKeywords, ...tickerKeywords, ...tickerKeywords].map((word, i) => (
             <span key={i} className="px-6 flex items-center gap-4">
               <span>{word}</span>
-              <span className="text-xs text-[var(--red)]">✦</span>
+              <span className="text-xs text-[var(--accent2)]">✦</span>
             </span>
           ))}
         </div>
@@ -143,32 +160,32 @@ export default function App() {
       </main>
 
       {/* Functional Festival Footer with Real Section Links */}
-      <footer className="relative z-10 border-t border-white/10 py-12 px-4 bg-[#0d0722] text-xs sm:text-sm">
+      <footer className="relative z-10 border-t border-white/10 py-12 px-4 bg-[var(--surface)] text-xs sm:text-sm">
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-6 text-center">
           {/* Quick Real Section Navigation Links */}
           <nav
             aria-label="Footer Navigation"
             className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs text-white/75"
           >
-            <a href="#top" className="hover:text-[var(--gold)] transition-colors">Home</a>
-            <a href="#schedule" className="hover:text-[var(--gold)] transition-colors">Schedule</a>
-            <a href="#activities" className="hover:text-[var(--gold)] transition-colors">Tracks</a>
-            <a href="#rules" className="hover:text-[var(--gold)] transition-colors">Rules & Eligibility</a>
-            <a href="#venue" className="hover:text-[var(--gold)] transition-colors">Campus Venue</a>
-            <a href="#gallery" className="hover:text-[var(--gold)] transition-colors">Atmosphere</a>
-            <a href="#register" className="hover:text-[var(--gold)] transition-colors">Free Registration</a>
-            <a href="#faq" className="hover:text-[var(--gold)] transition-colors">FAQ</a>
+            <a href="#top" className="hover:text-[var(--accent1)] transition-colors">Home</a>
+            <a href="#schedule" className="hover:text-[var(--accent1)] transition-colors">Schedule</a>
+            <a href="#activities" className="hover:text-[var(--accent1)] transition-colors">Tracks</a>
+            <a href="#rules" className="hover:text-[var(--accent1)] transition-colors">Rules & Eligibility</a>
+            <a href="#venue" className="hover:text-[var(--accent1)] transition-colors">Campus Venue</a>
+            <a href="#gallery" className="hover:text-[var(--accent1)] transition-colors">Atmosphere</a>
+            <a href="#register" className="hover:text-[var(--accent1)] transition-colors">Free Registration</a>
+            <a href="#faq" className="hover:text-[var(--accent1)] transition-colors">FAQ</a>
           </nav>
 
           {/* Festival Info & Helpdesk Contact */}
           <div className="space-y-1 opacity-70">
-            <p className="font-semibold text-[var(--cream)]">
+            <p className="font-semibold text-[var(--text)]">
               {EVENT.name}{EVENT.year} · {EVENT.dates}
             </p>
             <p className="text-xs">
               {EVENT.venue} · {EVENT.address}
             </p>
-            <p className="text-xs text-[var(--teal)] pt-1">
+            <p className="text-xs text-[var(--accent3)] pt-1">
               {HELPDESK.venue}
             </p>
           </div>
@@ -177,7 +194,7 @@ export default function App() {
             <span>© 2026 {EVENT.name}{EVENT.year} Organizing Committee. All rights reserved.</span>
             <a
               href="#top"
-              className="text-[var(--gold)] hover:underline inline-flex items-center gap-1"
+              className="text-[var(--accent1)] hover:underline inline-flex items-center gap-1"
             >
               Back to Top ↑
             </a>

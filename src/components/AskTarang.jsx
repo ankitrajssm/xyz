@@ -132,10 +132,10 @@ export default function AskTarang({ onNavigateToEvent, triggerQuery }) {
           role="dialog"
           aria-modal="false"
           aria-label="Ask Tarang Festival Doubt Assistant"
-          className="fixed bottom-20 right-4 sm:right-6 z-40 w-[calc(100vw-2rem)] sm:w-96 max-h-[560px] h-[520px] bg-[#140c34] border border-[var(--gold)]/30 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in"
+          className="fixed bottom-20 right-4 sm:right-6 z-40 w-[calc(100vw-2rem)] sm:w-96 max-h-[560px] h-[520px] bg-[var(--bg)] border border-[var(--accent1)]/30 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in"
         >
           {/* Header */}
-          <div className="bg-[#1b1242] border-b border-white/10 p-3.5 flex items-center justify-between shrink-0">
+          <div className="bg-[var(--surface)] border-b border-white/10 p-3.5 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[var(--teal)] inline-block" />
               <div>
@@ -167,7 +167,7 @@ export default function AskTarang({ onNavigateToEvent, triggerQuery }) {
           </div>
 
           {/* Quick Suggestion Chips Scrollbar */}
-          <div className="bg-[#100928] px-3 py-2 border-b border-white/5 overflow-x-auto flex gap-1.5 shrink-0 no-scrollbar">
+          <div className="bg-[var(--surface)]/80 px-3 py-2 border-b border-white/5 overflow-x-auto flex gap-1.5 shrink-0 no-scrollbar">
             {QUICK_CHIPS.map(chip => (
               <button
                 key={chip}

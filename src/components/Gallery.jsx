@@ -1,4 +1,5 @@
 import { GALLERY_HIGHLIGHTS } from '../data/eventData'
+import SparkleStar from './SparkleStar'
 
 /**
  * Returns clean inline SVG thematic graphics for festival moments without internet images.
@@ -32,7 +33,7 @@ function ThematicIllustration({ theme }) {
     case 'gaming':
       return (
         <svg viewBox="0 0 120 70" className="w-full h-24" fill="none" stroke="currentColor">
-          <path d="M25 45 C25 25, 45 22, 60 22 C75 22, 95 25, 95 45 C95 55, 82 58, 76 48 L70 40 L50 40 L44 48 C38 58, 25 55, 25 45 Z" stroke="var(--teal)" strokeWidth="1.5" fill="#150f38" />
+          <path d="M25 45 C25 25, 45 22, 60 22 C75 22, 95 25, 95 45 C95 55, 82 58, 76 48 L70 40 L50 40 L44 48 C38 58, 25 55, 25 45 Z" stroke="var(--teal)" strokeWidth="1.5" fill="var(--surface)" />
           <path d="M36 32 L44 32 M40 28 L40 36" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" />
           <circle cx="76" cy="31" r="2.5" fill="var(--red)" />
           <circle cx="84" cy="34" r="2.5" fill="var(--gold)" />
@@ -82,8 +83,22 @@ function ThematicIllustration({ theme }) {
 export default function Gallery({ onSelectEvent, isPlanned, onTogglePlan }) {
   return (
     <section id="gallery" className="max-w-6xl mx-auto px-4 py-16 sm:py-24 reveal">
-      <div className="text-center mb-12">
-        <h2 className="display text-3xl sm:text-5xl text-[var(--gold)]">Festival Atmosphere</h2>
+      <div className="text-center mb-12 relative">
+        <SparkleStar
+          size={18}
+          delay={0.7}
+          color="var(--accent1)"
+          className="absolute -top-3 left-1/3 hidden sm:inline-block"
+        />
+        <h2 className="display headline-shimmer text-3xl sm:text-5xl text-[var(--accent1)]">
+          Festival Atmosphere
+        </h2>
+        <SparkleStar
+          size={14}
+          delay={2.3}
+          color="var(--accent3)"
+          className="absolute -top-1 right-1/3 hidden sm:inline-block"
+        />
         <p className="text-sm sm:text-base opacity-75 mt-2 max-w-xl mx-auto">
           Explore iconic festival highlights. Tap any card below to view full problem statements, rules, and schedules.
         </p>
@@ -100,15 +115,15 @@ export default function Gallery({ onSelectEvent, isPlanned, onTogglePlan }) {
               tabIndex={0}
               onClick={() => onSelectEvent && onSelectEvent(item.eventId)}
               onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onSelectEvent && onSelectEvent(item.eventId)}
-              className="card p-5 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--teal)]"
+              className="card p-5 flex flex-col justify-between group cursor-pointer hover:border-[var(--accent1)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent3)]"
               aria-label={`View event details for ${item.title}`}
             >
               <div>
-                <div className="p-3 rounded-lg bg-black/30 border border-white/5 mb-4 group-hover:border-[var(--gold)]/30 transition-colors">
+                <div className="p-3 rounded-lg bg-black/30 border border-white/5 mb-4 group-hover:border-[var(--accent1)]/30 transition-colors">
                   <ThematicIllustration theme={item.theme} />
                 </div>
                 <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                  <span className="text-[var(--teal)] uppercase tracking-wider">{item.track} Track</span>
+                  <span className="text-[var(--accent3)] uppercase tracking-wider">{item.track} Track</span>
                   <div className="flex items-center gap-2">
                     <span className="opacity-40 text-[11px] hidden sm:inline">Tap to inspect</span>
                     <button
@@ -118,7 +133,7 @@ export default function Gallery({ onSelectEvent, isPlanned, onTogglePlan }) {
                         onTogglePlan && onTogglePlan(item.eventId)
                       }}
                       className={`p-1 rounded-full text-xs transition-colors cursor-pointer ${
-                        saved ? 'text-[var(--gold)] font-bold scale-110' : 'text-white/40 hover:text-[var(--gold)]'
+                        saved ? 'text-[var(--accent1)] font-bold scale-110 star-pop' : 'text-white/40 hover:text-[var(--accent1)]'
                       }`}
                       aria-label={saved ? `Remove from My Plan` : `Add to My Plan`}
                       title={saved ? 'Remove from My Plan' : 'Save to My Plan'}

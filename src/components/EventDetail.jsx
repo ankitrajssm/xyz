@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { EVENTS } from '../data/eventData'
 import { exportSingleEventIcs } from '../utils/ics'
+import SparkleStar from './SparkleStar'
 
 /**
  * Full Event Detail View Component (#/event/<id>).
@@ -217,9 +218,17 @@ export default function EventDetail({
             </span>
           </div>
 
-          <h1 id="detail-title" className="display text-3xl sm:text-5xl text-[var(--gold)] mb-3">
-            {event.title}
-          </h1>
+          <div className="relative">
+            <SparkleStar
+              size={18}
+              delay={0.5}
+              color="var(--accent1)"
+              className="absolute -top-3 -left-5 hidden sm:inline-block"
+            />
+            <h1 id="detail-title" className="display headline-shimmer text-3xl sm:text-5xl text-[var(--accent1)] mb-3">
+              {event.title}
+            </h1>
+          </div>
 
           <p className="text-base sm:text-lg opacity-85 leading-relaxed max-w-3xl mb-6">
             {event.desc}
@@ -227,21 +236,21 @@ export default function EventDetail({
 
           {/* Primary Action Buttons Bar */}
           <div className="flex flex-wrap items-center gap-3 pt-5 border-t border-white/10">
-            {/* Register */}
+            {/* Register with Shimmer */}
             <button
               onClick={handleRegisterClick}
-              className="px-6 py-2.5 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-xs sm:text-sm shadow-md cursor-pointer"
+              className="btn-shimmer px-6 py-2.5 rounded-full font-bold bg-[var(--accent1)] text-[var(--bg)] hover:brightness-105 transition-all text-xs sm:text-sm shadow-md cursor-pointer"
             >
               Register for This Event · Free Entry
             </button>
 
-            {/* Bookmark / My Plan */}
+            {/* Bookmark / My Plan with Star Pop */}
             <button
               onClick={() => onTogglePlan && onTogglePlan(event.id)}
               className={`px-4 py-2.5 rounded-full font-bold text-xs sm:text-sm border transition-all flex items-center gap-1.5 cursor-pointer ${
                 saved
-                  ? 'border-[var(--gold)] bg-[var(--gold)]/20 text-[var(--gold)]'
-                  : 'border-white/20 bg-white/5 hover:border-[var(--gold)] text-[var(--cream)]'
+                  ? 'border-[var(--accent1)] bg-[var(--accent1)]/20 text-[var(--accent1)] star-pop'
+                  : 'border-white/20 bg-white/5 hover:border-[var(--accent1)] text-[var(--text)]'
               }`}
               aria-label={saved ? `Remove ${event.title} from My Plan` : `Add ${event.title} to My Plan`}
               aria-pressed={saved}

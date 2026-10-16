@@ -1,4 +1,5 @@
 import { EVENT } from '../data/eventData'
+import SparkleStar from './SparkleStar'
 
 const VENUE_TIPS = [
   {
@@ -30,9 +31,23 @@ const VENUE_TIPS = [
 export default function Venue() {
   return (
     <section id="venue" className="max-w-6xl mx-auto px-4 py-16 sm:py-24 reveal">
-      {/* Section Header */}
-      <div className="text-center mb-12">
-        <h2 className="display text-3xl sm:text-5xl text-[var(--gold)]">Venue & Campus</h2>
+      {/* Section Header with Shimmer */}
+      <div className="text-center mb-12 relative">
+        <SparkleStar
+          size={16}
+          delay={1.1}
+          color="var(--accent1)"
+          className="absolute -top-3 left-1/3 hidden sm:inline-block"
+        />
+        <h2 className="display headline-shimmer text-3xl sm:text-5xl text-[var(--accent1)]">
+          Venue & Campus
+        </h2>
+        <SparkleStar
+          size={14}
+          delay={2.4}
+          color="var(--accent3)"
+          className="absolute -top-1 right-1/3 hidden sm:inline-block"
+        />
         <p className="text-sm sm:text-base opacity-75 mt-2 max-w-xl mx-auto">
           {EVENT.venue} · {EVENT.address}
         </p>

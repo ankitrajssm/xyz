@@ -7,6 +7,20 @@
     <meta name="theme-color" content="#120b2e" />
     <meta name="description" content="TARANG '26 - Three days of code, music and colour. Annual College Festival." />
     <title>TARANG '26 | Annual College Festival</title>
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('tarang_theme') || 'marigold';
+          document.documentElement.setAttribute('data-theme', theme);
+          var effects = localStorage.getItem('tarang_effects');
+          if (effects === null) {
+            var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            effects = reduced ? 'false' : 'true';
+          }
+          document.documentElement.setAttribute('data-effects', effects);
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

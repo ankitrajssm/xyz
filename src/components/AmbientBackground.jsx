@@ -1,17 +1,17 @@
 import { useEffect, useRef } from 'react'
 
 /**
- * Section to ambient color mapping (in hex and RGB for CSS variable styling).
- * Indigo base (#120b2e) with Gold (#ffb627), Coral (#e5446d), and Teal (#2ec4b6).
+ * Section to ambient color mapping.
+ * Dynamically binds each section to the active theme's accent variables.
  */
-const SECTION_COLORS = {
-  schedule: { hex: '#2ec4b6', rgb: '46, 196, 182' }, // Teal
-  activities: { hex: '#ffb627', rgb: '255, 182, 39' }, // Gold
-  rules: { hex: '#2ec4b6', rgb: '46, 196, 182' }, // Teal
-  venue: { hex: '#e5446d', rgb: '229, 68, 109' }, // Coral
-  gallery: { hex: '#2ec4b6', rgb: '46, 196, 182' }, // Teal
-  register: { hex: '#ffb627', rgb: '255, 182, 39' }, // Gold
-  faq: { hex: '#e5446d', rgb: '229, 68, 109' }, // Coral
+const SECTION_ACCENT_MAP = {
+  schedule: '3',    // Accent 3 (Teal/Lime/Turquoise)
+  activities: '1',  // Accent 1 (Gold/Cyan/Saffron)
+  rules: '3',       // Accent 3
+  venue: '2',       // Accent 2 (Coral/Magenta/Rose)
+  gallery: '3',     // Accent 3
+  register: '1',    // Accent 1
+  faq: '2',         // Accent 2
 }
 
 /**
@@ -20,7 +20,7 @@ const SECTION_COLORS = {
  * 1. 3 Drifting color blobs (transform only, 30-45s loops, radial gradient, no filter blur).
  * 2. Canvas ember particles (sparks rising from diya, paused on hidden or ambient=false).
  * 3. Cursor spotlight (pointer: fine only, throttled via rAF).
- * 4. Section-aware color responding to scroll intersection.
+ * 4. Section-aware color responding to scroll intersection and theme variables.
  * Plus a vignette overlay ensuring WCAG AA text contrast.
  */
 export default function AmbientBackground({ ambient = true }) {
@@ -62,7 +62,7 @@ export default function AmbientBackground({ ambient = true }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const sectionIds = Object.keys(SECTION_COLORS)
+    const sectionIds = Object.keys(SECTION_ACCENT_MAP)
     const elements = sectionIds
       .map(id => document.getElementById(id))
       .filter(Boolean)
@@ -71,7 +71,6 @@ export default function AmbientBackground({ ambient = true }) {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find visible entry with highest intersection ratio
         let bestEntry = null
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -82,10 +81,14 @@ export default function AmbientBackground({ ambient = true }) {
         }
 
         if (bestEntry && bestEntry.target && bestEntry.target.id) {
-          const color = SECTION_COLORS[bestEntry.target.id]
-          if (color) {
-            document.documentElement.style.setProperty('--ambient', color.hex)
-            document.documentElement.style.setProperty('--ambient-rgb', color.rgb)
+          const accentIndex = SECTION_ACCENT_MAP[bestEntry.target.id] || '3'
+          const style = getComputedStyle(document.documentElement)
+          const hex = style.getPropertyValue(`--accent${accentIndex}`).trim()
+          const rgb = style.getPropertyValue(`--accent${accentIndex}-rgb`).trim()
+
+          if (hex && rgb) {
+            document.documentElement.style.setProperty('--ambient', hex)
+            document.documentElement.style.setProperty('--ambient-rgb', rgb)
           }
         }
       },
@@ -128,14 +131,20 @@ export default function AmbientBackground({ ambient = true }) {
 
     window.addEventListener('resize', handleResize, { passive: true })
 
+    // Pull current theme RGB values
+    const getThemeRgbColors = () => {
+      const style = getComputedStyle(document.documentElement)
+      return [
+        style.getPropertyValue('--accent1-rgb').trim() || '255, 182, 39',
+        style.getPropertyValue('--accent2-rgb').trim() || '229, 68, 109',
+        style.getPropertyValue('--accent3-rgb').trim() || '46, 196, 182',
+      ]
+    }
+
+    let colors = getThemeRgbColors()
+
     // Initialize particles
     const particles = []
-    const colors = [
-      '255, 182, 39', // gold
-      '229, 68, 109', // coral
-      '255, 244, 224', // warm cream
-    ]
-
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
@@ -145,7 +154,7 @@ export default function AmbientBackground({ ambient = true }) {
         size: (Math.random() * 1.8 + 0.8) * dpr,
         alpha: Math.random() * 0.5,
         maxAlpha: Math.random() * 0.5 + 0.2,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        colorIndex: Math.floor(Math.random() * 3),
         life: Math.random() * 200,
         maxLife: Math.random() * 220 + 160,
       })
@@ -163,7 +172,6 @@ export default function AmbientBackground({ ambient = true }) {
         p.x += p.vx
         p.y += p.vy
 
-        // Alpha envelope: fade in first 20%, fade out last 30%
         const lifeRatio = p.life / p.maxLife
         if (lifeRatio < 0.2) {
           p.alpha = (lifeRatio / 0.2) * p.maxAlpha
@@ -172,31 +180,32 @@ export default function AmbientBackground({ ambient = true }) {
         }
 
         if (p.life >= p.maxLife || p.y < -10) {
-          // Reset particle to bottom
           p.x = Math.random() * width
           p.y = height + Math.random() * 20
           p.vx = (Math.random() - 0.5) * 0.35 * dpr
           p.vy = -(Math.random() * 0.45 + 0.25) * dpr
           p.life = 0
           p.alpha = 0
+          p.colorIndex = Math.floor(Math.random() * 3)
         }
 
+        const colorStr = colors[p.colorIndex] || colors[0]
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${p.color}, ${Math.max(0, p.alpha)})`
+        ctx.fillStyle = `rgba(${colorStr}, ${Math.max(0, p.alpha)})`
         ctx.fill()
       }
 
       animationFrameId = requestAnimationFrame(render)
     }
 
-    // Tab visibility handling: pause when document is hidden
     const handleVisibilityChange = () => {
       if (document.hidden) {
         isRunning = false
         cancelAnimationFrame(animationFrameId)
       } else {
         isRunning = true
+        colors = getThemeRgbColors()
         animationFrameId = requestAnimationFrame(render)
       }
     }
@@ -223,26 +232,25 @@ export default function AmbientBackground({ ambient = true }) {
     >
       {/* Layer 1: Drifting Colour Glows (Radial gradients, transform only, 30-45s) */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Blob 1: Gold drift */}
+        {/* Blob 1: Accent 1 glow */}
         <div
-          className="absolute -top-[15%] -left-[10%] w-[65vw] h-[65vw] max-w-[850px] max-h-[850px] rounded-full ambient-blob-1"
+          className="absolute -top-[15%] -left-[10%] w-[65vw] h-[65vw] max-w-[850px] max-h-[850px] rounded-full ambient-blob-1 transition-colors duration-1000"
           style={{
-            background: 'radial-gradient(circle, rgba(255, 182, 39, 0.08) 0%, rgba(255, 182, 39, 0.02) 45%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(var(--accent1-rgb), 0.08) 0%, rgba(var(--accent1-rgb), 0.02) 45%, transparent 70%)',
           }}
         />
-        {/* Blob 2: Coral drift */}
+        {/* Blob 2: Accent 2 glow */}
         <div
-          className="absolute top-[35%] -right-[15%] w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] rounded-full ambient-blob-2"
+          className="absolute top-[35%] -right-[15%] w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] rounded-full ambient-blob-2 transition-colors duration-1000"
           style={{
-            background: 'radial-gradient(circle, rgba(229, 68, 109, 0.07) 0%, rgba(229, 68, 109, 0.015) 50%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(var(--accent2-rgb), 0.07) 0%, rgba(var(--accent2-rgb), 0.015) 50%, transparent 70%)',
           }}
         />
-        {/* Blob 3: Section-aware / Teal drift */}
+        {/* Blob 3: Section-aware / Accent 3 glow */}
         <div
-          className="absolute -bottom-[20%] left-[20%] w-[75vw] h-[75vw] max-w-[950px] max-h-[950px] rounded-full ambient-blob-3"
+          className="absolute -bottom-[20%] left-[20%] w-[75vw] h-[75vw] max-w-[950px] max-h-[950px] rounded-full ambient-blob-3 transition-colors duration-1000"
           style={{
-            background: 'radial-gradient(circle, rgba(var(--ambient-rgb, 46, 196, 182), 0.08) 0%, rgba(var(--ambient-rgb, 46, 196, 182), 0.02) 45%, transparent 70%)',
-            transition: 'background 1.2s ease',
+            background: 'radial-gradient(circle, rgba(var(--ambient-rgb), 0.08) 0%, rgba(var(--ambient-rgb), 0.02) 45%, transparent 70%)',
           }}
         />
       </div>
@@ -258,15 +266,15 @@ export default function AmbientBackground({ ambient = true }) {
         ref={spotlightRef}
         className="hidden md:block absolute inset-0 pointer-events-none transition-opacity duration-500"
         style={{
-          background: 'radial-gradient(600px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), rgba(var(--ambient-rgb, 46, 196, 182), 0.06), transparent 75%)',
+          background: 'radial-gradient(600px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), rgba(var(--ambient-rgb), 0.06), transparent 75%)',
         }}
       />
 
       {/* Layer 4: Vignette Overlay (Guarantees WCAG AA Text Contrast) */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none transition-colors duration-1000"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(18, 11, 46, 0.45) 85%, rgba(18, 11, 46, 0.8) 100%)',
+          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(var(--bg-rgb), 0.45) 85%, rgba(var(--bg-rgb), 0.8) 100%)',
         }}
       />
     </div>
