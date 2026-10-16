@@ -1,4 +1,6 @@
-// Saara content yahin hai. Naam/date/events yahan badal do, baaki site apne aap update ho jayegi.
+// Central event content repository for Tarang '26.
+// Keep all content, schedules, and festival metadata in this single source of truth.
+
 export const EVENT = {
   name: 'TARANG',
   year: "'26",
@@ -34,3 +36,98 @@ export const FAQS = [
   ['What should I carry?', 'College ID card, registration receipt, laptop and charger for tech events.'],
   ['Can I join more than one event?', 'Yes, as long as the timings do not clash. Tell the help desk if they do.'],
 ]
+
+// 3-step participation workflow displayed alongside registration
+export const HOW_TO_PARTICIPATE = [
+  {
+    step: '01',
+    title: 'Choose Your Event',
+    desc: 'Browse through the 9 flagship events across Tech, Gaming, Music, and Cultural tracks in the schedule.',
+  },
+  {
+    step: '02',
+    title: 'Submit Registration',
+    desc: 'Fill out the 1-minute registration form with your student contact details. Event entry is completely free.',
+  },
+  {
+    step: '03',
+    title: 'Check In On Campus',
+    desc: 'Bring your valid college ID card to the help desk at Gate 2 on event day to collect your badge.',
+  },
+]
+
+// Fictional student fest partners with simple geometric badges (no real company brands)
+export const SPONSORS = [
+  { id: 's1', name: 'Aether Dynamics', role: 'Innovation Partner', category: 'Robotics & AI' },
+  { id: 's2', name: 'CodePulse Labs', role: 'Platform Partner', category: 'Cloud Infrastructure' },
+  { id: 's3', name: 'Vortex Gaming', role: 'Esports Partner', category: 'Gaming Hardware' },
+  { id: 's4', name: 'Indus Soundworks', role: 'Acoustics Partner', category: 'Live Audio & Stage' },
+  { id: 's5', name: 'ByteForge Studio', role: 'Design Partner', category: 'Creative Tools' },
+  { id: 's6', name: 'Kavach Systems', role: 'Security Partner', category: 'Cyber Defence' },
+]
+
+// Festival atmosphere highlights rendered with bespoke vector graphics
+export const GALLERY_HIGHLIGHTS = [
+  {
+    id: 'g1',
+    title: '24-Hour Code Sprint',
+    track: 'Tech',
+    desc: 'Overnight software build where ideas turn into functional prototypes.',
+    theme: 'code',
+  },
+  {
+    id: 'g2',
+    title: 'Steel Arena Robo Wars',
+    track: 'Tech',
+    desc: 'High-torque remote-controlled machines clashing in an enclosed cage.',
+    theme: 'bot',
+  },
+  {
+    id: 'g3',
+    title: 'Esports Bracket Final',
+    track: 'Gaming',
+    desc: 'Tactical matches with live casters and auditorium crowd cheers.',
+    theme: 'gaming',
+  },
+  {
+    id: 'g4',
+    title: 'Starry Open-Air DJ Night',
+    track: 'Music',
+    desc: 'High-energy beats, ambient lights, and an electric night crowd.',
+    theme: 'music',
+  },
+  {
+    id: 'g5',
+    title: 'Bhangra & Street Theatre',
+    track: 'Cultural',
+    desc: 'High-impact nukkad natak stories and vibrant folk dance beats.',
+    theme: 'theatre',
+  },
+  {
+    id: 'g6',
+    title: 'Live App Design Duel',
+    track: 'Tech',
+    desc: 'Ninety minutes to ideate, prototype, and defend real product designs.',
+    theme: 'design',
+  },
+]
+
+// Derive stats strictly from data arrays above (no invented numbers)
+export function getDerivedStats() {
+  const totalPrizeNumeric = EVENTS.reduce((sum, item) => {
+    // Extract numeric values from strings like '₹30,000'
+    const num = parseInt(item.prize.replace(/[^\d]/g, ''), 10)
+    return isNaN(num) ? sum : sum + num
+  }, 0)
+
+  const daysSet = new Set(EVENTS.map(e => e.day))
+  const categoriesSet = new Set(EVENTS.map(e => e.cat))
+
+  return {
+    prizeNumeric: totalPrizeNumeric,
+    prizeFormatted: '₹' + totalPrizeNumeric.toLocaleString('en-IN'),
+    totalEvents: EVENTS.length,
+    totalDays: daysSet.size,
+    totalCategories: categoriesSet.size,
+  }
+}

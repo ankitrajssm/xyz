@@ -1,22 +1,183 @@
 @import "tailwindcss";
-:root{--ink:#120b2e;--gold:#ffb627;--red:#e5446d;--teal:#2ec4b6;--cream:#fff4e0}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--ink);color:var(--cream);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
-.display{font-family:Georgia,"Times New Roman",serif;font-weight:900;letter-spacing:-.02em}
-.headline{color:var(--gold);text-shadow:4px 4px 0 var(--red)}
-.drop{display:inline-block;animation:drop .9s cubic-bezier(.2,1.4,.4,1) both}
-.spin{animation:spin 80s linear infinite}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
-.reveal.in{opacity:1;transform:none}
-.card{background:rgba(255,244,224,.06);border:1px solid rgba(255,244,224,.15);border-radius:.75rem;transition:border-color .2s,transform .2s}
-.card:hover{border-color:var(--gold)}
-.pop{animation:pop .4s ease both}
-.marquee{display:flex;width:max-content;animation:marq 25s linear infinite}
-.ring{transform-box:fill-box;transform-origin:center;animation:ring 2s ease-out infinite}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
-@keyframes drop{from{opacity:0;transform:translateY(-120px) rotate(-12deg)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}}
-@keyframes marq{to{transform:translateX(-50%)}}
-@keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(4);opacity:0}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+
+:root {
+  --ink: #120b2e;
+  --gold: #ffb627;
+  --red: #e5446d;
+  --teal: #2ec4b6;
+  --cream: #fff4e0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--ink);
+}
+
+body {
+  margin: 0;
+  background-color: var(--ink);
+  color: var(--cream);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography classes */
+.display {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.headline {
+  color: var(--gold);
+  text-shadow: 4px 4px 0 var(--red);
+}
+
+/* Base interactive card style - quiet, consistent, hardware accelerated */
+.card {
+  background: rgba(255, 244, 224, 0.05);
+  border: 1px solid rgba(255, 244, 224, 0.12);
+  border-radius: 0.85rem;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+  will-change: transform;
+}
+
+.card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+/* Scroll reveal states - opacity and transform only */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero animations */
+.drop {
+  display: inline-block;
+  animation: heroDrop 0.9s cubic-bezier(0.2, 1.35, 0.4, 1) both;
+  will-change: transform, opacity;
+}
+
+.spin-rangoli {
+  animation: spinClockwise 90s linear infinite;
+  will-change: transform;
+  transform-origin: center;
+}
+
+.spin-rangoli-reverse {
+  animation: spinCounterClockwise 120s linear infinite;
+  will-change: transform;
+  transform-origin: center;
+}
+
+.pulse-beacon {
+  animation: pulseBeacon 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 32s linear infinite;
+  will-change: transform;
+}
+
+/* Keyframes - strictly transform and opacity */
+@keyframes heroDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-90px) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes spinClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinCounterClockwise {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulseBeacon {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.9;
+  }
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Accessible focus styling */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .spin-rangoli,
+  .spin-rangoli-reverse,
+  .drop,
+  .marquee-track,
+  .pulse-beacon {
+    animation: none !important;
+    transform: none !important;
+  }
+}
