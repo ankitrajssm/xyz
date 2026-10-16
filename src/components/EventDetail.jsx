@@ -1,13 +1,24 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { EVENTS } from '../data/eventData'
+import { exportSingleEventIcs } from '../utils/ics'
 
 /**
  * Full Event Detail View Component (#/event/<id>).
  * Accessible, keyboard-navigable, with previous/next navigation,
- * comprehensive event specifications, and direct link to registration.
+ * comprehensive event specifications, direct link to registration,
+ * personal itinerary bookmarking, calendar export, and native share/clipboard fallback.
  */
-export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEvent, onAskTarang }) {
+export default function EventDetail({
+  eventId,
+  onClose,
+  onNavigate,
+  onRegisterEvent,
+  onAskTarang,
+  isPlanned,
+  onTogglePlan,
+}) {
   const containerRef = useRef(null)
+  const [toastMessage, setToastMessage] = useState('')
 
   // Find target event
   const event = EVENTS.find(e => String(e.id) === String(eventId))
@@ -44,7 +55,7 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <button
               onClick={onClose}
-              className="px-6 py-3 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-sm"
+              className="px-6 py-3 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-sm cursor-pointer"
             >
               ← Return to Schedule
             </button>
@@ -78,6 +89,42 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
     onClose()
   }
 
+  const handleShare = async () => {
+    const shareUrl = window.location.href
+    const shareData = {
+      title: `${event.title} · Tarang '26`,
+      text: `${event.title} (${event.cat} Track) at Tarang '26 on ${event.date} at ${event.venue}. Register for free!`,
+      url: shareUrl,
+    }
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData)
+        return
+      } catch (err) {
+        if (err.name === 'AbortError') return
+      }
+    }
+
+    // Fallback: Copy link to clipboard
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl)
+        setToastMessage('Link copied to clipboard!')
+      } else {
+        setToastMessage(`Link: ${shareUrl}`)
+      }
+    } catch {
+      setToastMessage('Unable to copy automatically. Share via browser bar.')
+    }
+
+    setTimeout(() => {
+      setToastMessage('')
+    }, 3000)
+  }
+
+  const saved = isPlanned ? isPlanned(event.id) : false
+
   return (
     <div
       ref={containerRef}
@@ -91,7 +138,7 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <button
             onClick={onClose}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--teal)] hover:text-[var(--gold)] transition-colors p-1"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--teal)] hover:text-[var(--gold)] transition-colors p-1 cursor-pointer"
             aria-label="Back to festival timetable"
           >
             <span>←</span>
@@ -102,13 +149,43 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
             {event.cat} Track · Day {event.day}
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg border border-white/20 hover:border-[var(--gold)] text-sm opacity-80 hover:opacity-100 transition-colors"
-            aria-label="Close event detail view"
-          >
-            ✕ Close
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Quick Bookmark Star */}
+            <button
+              onClick={() => onTogglePlan && onTogglePlan(event.id)}
+              className={`p-1.5 rounded-lg border text-sm transition-colors cursor-pointer flex items-center gap-1 ${
+                saved
+                  ? 'border-[var(--gold)] bg-[var(--gold)]/20 text-[var(--gold)] font-bold'
+                  : 'border-white/20 text-white/60 hover:text-[var(--gold)] hover:border-[var(--gold)]/50'
+              }`}
+              aria-label={saved ? 'Remove from My Plan' : 'Save to My Plan'}
+              title={saved ? 'Remove from My Plan' : 'Save to My Plan'}
+            >
+              <span>★</span>
+              <span className="hidden md:inline text-xs">{saved ? 'Saved' : 'Plan'}</span>
+            </button>
+
+            {/* Quick Share */}
+            <button
+              onClick={handleShare}
+              className="p-1.5 rounded-lg border border-white/20 hover:border-[var(--gold)] text-sm opacity-80 hover:opacity-100 transition-colors cursor-pointer"
+              aria-label="Share event link"
+              title="Share event link"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+            </button>
+
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg border border-white/20 hover:border-[var(--gold)] text-sm opacity-80 hover:opacity-100 transition-colors cursor-pointer"
+              aria-label="Close event detail view"
+            >
+              ✕ Close
+            </button>
+          </div>
         </div>
       </div>
 
@@ -148,19 +225,62 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
             {event.desc}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-white/10">
+          {/* Primary Action Buttons Bar */}
+          <div className="flex flex-wrap items-center gap-3 pt-5 border-t border-white/10">
+            {/* Register */}
             <button
               onClick={handleRegisterClick}
-              className="px-8 py-3 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-sm shadow-md"
+              className="px-6 py-2.5 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-xs sm:text-sm shadow-md cursor-pointer"
             >
               Register for This Event · Free Entry
             </button>
-            <div className="text-xs opacity-75 flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-[var(--teal)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+
+            {/* Bookmark / My Plan */}
+            <button
+              onClick={() => onTogglePlan && onTogglePlan(event.id)}
+              className={`px-4 py-2.5 rounded-full font-bold text-xs sm:text-sm border transition-all flex items-center gap-1.5 cursor-pointer ${
+                saved
+                  ? 'border-[var(--gold)] bg-[var(--gold)]/20 text-[var(--gold)]'
+                  : 'border-white/20 bg-white/5 hover:border-[var(--gold)] text-[var(--cream)]'
+              }`}
+              aria-label={saved ? `Remove ${event.title} from My Plan` : `Add ${event.title} to My Plan`}
+              aria-pressed={saved}
+            >
+              <span aria-hidden="true">{saved ? '★' : '☆'}</span>
+              <span>{saved ? 'Saved in My Plan' : 'Add to My Plan'}</span>
+            </button>
+
+            {/* Add to Calendar */}
+            <button
+              onClick={() => exportSingleEventIcs(event)}
+              className="px-4 py-2.5 rounded-full font-semibold text-xs sm:text-sm border border-white/20 bg-white/5 hover:border-[var(--teal)] hover:text-[var(--teal)] text-[var(--cream)] transition-all flex items-center gap-1.5 cursor-pointer"
+              aria-label={`Add ${event.title} to calendar`}
+              title="Download iCalendar (.ics) event file"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <span>Reporting Venue: <strong>{event.venue}</strong></span>
-            </div>
+              <span>Add to Calendar</span>
+            </button>
+
+            {/* Share Event */}
+            <button
+              onClick={handleShare}
+              className="px-4 py-2.5 rounded-full font-semibold text-xs sm:text-sm border border-white/20 bg-white/5 hover:border-[var(--gold)] hover:text-[var(--gold)] text-[var(--cream)] transition-all flex items-center gap-1.5 cursor-pointer"
+              aria-label="Share event"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              <span>Share</span>
+            </button>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-white/5 text-xs opacity-75 flex items-center gap-1.5">
+            <svg className="w-4 h-4 text-[var(--teal)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            </svg>
+            <span>Reporting Venue: <strong>{event.venue}</strong> · Report 30 minutes prior to schedule</span>
           </div>
         </div>
 
@@ -283,7 +403,7 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
           </div>
         </div>
 
-        {/* What to Carry & Student Coordinator Contact */}
+        {/* What to Carry & Questions */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
           {/* What to carry checklist */}
           <div className="card p-6">
@@ -327,7 +447,7 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
         <div className="border-t border-b border-white/10 py-6 my-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <button
             onClick={() => onNavigate(prevEvent.id)}
-            className="w-full sm:w-auto text-left card p-3 sm:px-5 flex items-center gap-3 hover:border-[var(--gold)] transition-colors group"
+            className="w-full sm:w-auto text-left card p-3 sm:px-5 flex items-center gap-3 hover:border-[var(--gold)] transition-colors group cursor-pointer"
           >
             <span className="text-lg opacity-60 group-hover:-translate-x-1 transition-transform" aria-hidden="true">←</span>
             <div>
@@ -338,7 +458,7 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
 
           <button
             onClick={() => onNavigate(nextEvent.id)}
-            className="w-full sm:w-auto text-right card p-3 sm:px-5 flex items-center justify-end gap-3 hover:border-[var(--gold)] transition-colors group"
+            className="w-full sm:w-auto text-right card p-3 sm:px-5 flex items-center justify-end gap-3 hover:border-[var(--gold)] transition-colors group cursor-pointer"
           >
             <div>
               <div className="text-[10px] uppercase tracking-wider text-[var(--teal)] font-bold">Next Event</div>
@@ -359,7 +479,7 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
                 <button
                   key={rel.id}
                   onClick={() => onNavigate(rel.id)}
-                  className="card p-4 text-left hover:border-[var(--gold)] transition-colors group"
+                  className="card p-4 text-left hover:border-[var(--gold)] transition-colors group cursor-pointer"
                 >
                   <div className="text-[10px] text-[var(--teal)] font-bold uppercase">{rel.cat} · {rel.time}</div>
                   <div className="font-bold text-sm text-[var(--cream)] group-hover:text-[var(--gold)] transition-colors mt-1">
@@ -376,12 +496,24 @@ export default function EventDetail({ eventId, onClose, onNavigate, onRegisterEv
         <div className="text-center mt-12">
           <button
             onClick={onClose}
-            className="px-8 py-3 rounded-full font-semibold border border-white/20 hover:border-[var(--gold)] text-[var(--cream)] transition-colors text-sm"
+            className="px-8 py-3 rounded-full font-semibold border border-white/20 hover:border-[var(--gold)] text-[var(--cream)] transition-colors text-sm cursor-pointer"
           >
             ← Back to Festival Schedule
           </button>
         </div>
       </div>
+
+      {/* Accessible Toast Notification */}
+      {toastMessage && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[var(--gold)] text-[var(--ink)] px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-2xl flex items-center gap-2 animate-in"
+        >
+          <span>✓</span>
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   )
 }

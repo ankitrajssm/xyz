@@ -3,6 +3,8 @@ import { useAssistant } from '../hooks/useAssistant'
 
 const QUICK_CHIPS = [
   'Schedule today',
+  'How to save events?',
+  'Add to calendar?',
   'How to register?',
   'Rules of Hackathon',
   'Venue & travel',
@@ -11,6 +13,8 @@ const QUICK_CHIPS = [
 ]
 
 const FALLBACK_CHIPS = [
+  'How to save events?',
+  'Add to calendar?',
   'How to register?',
   'Schedule today',
   'Who can participate?',

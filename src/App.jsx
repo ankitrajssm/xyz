@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { EVENT, HELPDESK } from './data/eventData'
 import { useReveal } from './hooks/useReveal'
 import { useHashRoute } from './hooks/useHashRoute'
+import { useAmbient } from './hooks/useAmbient'
+import { usePlan } from './hooks/usePlan'
 import ScrollProgress from './components/ScrollProgress'
+import AmbientBackground from './components/AmbientBackground'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import StatsStrip from './components/StatsStrip'
@@ -16,16 +19,23 @@ import Register from './components/Register'
 import Faq from './components/Faq'
 import EventDetail from './components/EventDetail'
 import AskTarang from './components/AskTarang'
+import PlanDrawer from './components/PlanDrawer'
 
 /**
  * Main Tarang '26 Application Component.
- * Integrates hash routing (#/event/<id>), interactive festival sections,
+ * Integrates Ambient Mode, My Plan itinerary drawer with clash detection,
+ * hash routing (#/event/<id>), interactive festival sections,
  * doubt assistant, and accessible keyboard navigation.
  */
 export default function App() {
   const [preSelectedTitle, setPreSelectedTitle] = useState('')
   const [assistantTrigger, setAssistantTrigger] = useState(null)
+  const [isPlanOpen, setIsPlanOpen] = useState(false)
+
+  // Custom Hooks
   const { activeEventId, openEvent, closeEvent } = useHashRoute()
+  const { ambient, toggleAmbient } = useAmbient()
+  const { plan, isPlanned, togglePlan, clearPlan } = usePlan()
 
   // Viewport scroll reveal observer
   useReveal()
@@ -57,12 +67,20 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--ink)] text-[var(--cream)] selection:bg-[var(--gold)] selection:text-[var(--ink)]">
+    <div className="relative min-h-screen bg-[var(--ink)] text-[var(--cream)] selection:bg-[var(--gold)] selection:text-[var(--ink)]">
+      {/* 4-Layer Ambient Mode Background (Pointer events none, behind content) */}
+      <AmbientBackground ambient={ambient} />
+
       {/* Top Scroll Indicator */}
       <ScrollProgress />
 
-      {/* Main Navigation */}
-      <Navbar />
+      {/* Main Navigation with Ambient Toggle and My Plan counter */}
+      <Navbar
+        ambient={ambient}
+        onToggleAmbient={toggleAmbient}
+        planCount={plan.length}
+        onOpenPlan={() => setIsPlanOpen(true)}
+      />
 
       {/* Memorable Festival Hero */}
       <Hero />
@@ -83,15 +101,23 @@ export default function App() {
       </div>
 
       {/* Main Content Sections */}
-      <main>
+      <main className="relative z-10">
         {/* Animated Numerical Stats Strip (Strictly derived from eventData.js) */}
         <StatsStrip />
 
-        {/* Priority Section: Timetable & Filterable Schedule (Opens detail view) */}
-        <Schedule onSelectEvent={openEvent} />
+        {/* Priority Section: Timetable & Filterable Schedule (Opens detail view & bookmarking) */}
+        <Schedule
+          onSelectEvent={openEvent}
+          isPlanned={isPlanned}
+          onTogglePlan={togglePlan}
+        />
 
-        {/* Priority Section: 4 Tracks & Activity Overviews (Opens detail view) */}
-        <Activities onSelectEvent={openEvent} />
+        {/* Priority Section: 4 Tracks & Activity Overviews (Opens detail view & bookmarking) */}
+        <Activities
+          onSelectEvent={openEvent}
+          isPlanned={isPlanned}
+          onTogglePlan={togglePlan}
+        />
 
         {/* Rules & Eligibility Guidelines */}
         <RulesSection />
@@ -99,8 +125,12 @@ export default function App() {
         {/* Priority Section: Campus Venue, Map & Logistics */}
         <Venue />
 
-        {/* Festival Atmosphere Highlights (Clickable cards opening detail view) */}
-        <Gallery onSelectEvent={openEvent} />
+        {/* Festival Atmosphere Highlights (Clickable cards opening detail view & bookmarking) */}
+        <Gallery
+          onSelectEvent={openEvent}
+          isPlanned={isPlanned}
+          onTogglePlan={togglePlan}
+        />
 
         {/* Priority Section: Participation Steps & Registration Form */}
         <Register preSelectedEventTitle={preSelectedTitle} />
@@ -108,12 +138,12 @@ export default function App() {
         {/* Collapsible FAQ Accordion */}
         <Faq />
 
-       
+        {/* Neutral Partners Placeholder Badges */}
         <Sponsors />
       </main>
 
       {/* Functional Festival Footer with Real Section Links */}
-      <footer className="border-t border-white/10 py-12 px-4 bg-[#0d0722] text-xs sm:text-sm">
+      <footer className="relative z-10 border-t border-white/10 py-12 px-4 bg-[#0d0722] text-xs sm:text-sm">
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-6 text-center">
           {/* Quick Real Section Navigation Links */}
           <nav
@@ -163,8 +193,20 @@ export default function App() {
           onNavigate={openEvent}
           onRegisterEvent={handleRegisterFromEvent}
           onAskTarang={handleAskAboutEvent}
+          isPlanned={isPlanned}
+          onTogglePlan={togglePlan}
         />
       )}
+
+      {/* My Plan Slide-over Drawer with Schedule Clash Detection */}
+      <PlanDrawer
+        isOpen={isPlanOpen}
+        onClose={() => setIsPlanOpen(false)}
+        plan={plan}
+        togglePlan={togglePlan}
+        clearPlan={clearPlan}
+        onSelectEvent={openEvent}
+      />
 
       {/* "Ask Tarang" Doubt Assistant (Rule-based, no external AI API) */}
       <AskTarang

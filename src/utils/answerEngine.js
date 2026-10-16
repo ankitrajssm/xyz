@@ -294,9 +294,44 @@ export function answerVisitorQuery(query) {
     }
   }
 
-  // 3. Fallback Response using new generic contact note
+  // Capability 1: How do I save events / make my schedule / My Plan?
+  if (
+    rawLower.includes('save') ||
+    rawLower.includes('plan') ||
+    rawLower.includes('bookmark') ||
+    rawLower.includes('itinerary') ||
+    rawLower.includes('my plan') ||
+    rawLower.includes('custom schedule') ||
+    rawLower.includes('personal schedule') ||
+    rawLower.includes('star') ||
+    rawLower.includes('clash')
+  ) {
+    return {
+      text: `⭐ How to save events & create your festival itinerary:\n1. Tap the star (★) button on any event card in the Schedule, Tracks, Highlights, or Event Detail page.\n2. Open "My Plan" from the top navigation bar to see your bookmarked itinerary grouped by day.\n3. The system automatically alerts you if any events have overlapping time clashes!\n4. You can also print your timetable or export all events to your calendar.`,
+      link: { text: 'Browse Festival Schedule', hash: '#schedule' },
+    }
+  }
+
+  // Capability 2: How do I add events to my calendar?
+  if (
+    rawLower.includes('calendar') ||
+    rawLower.includes('ics') ||
+    rawLower.includes('google calendar') ||
+    rawLower.includes('apple calendar') ||
+    rawLower.includes('outlook') ||
+    rawLower.includes('cal') ||
+    rawLower.includes('export calendar') ||
+    rawLower.includes('download schedule')
+  ) {
+    return {
+      text: `📅 How to add events to your calendar:\n• Single Event: Open any event detail view (#/event/<id>) and tap "Add to Calendar" to download its .ics file.\n• All Saved Events: Open "My Plan" in the top navigation and click "Export Calendar" to download your full itinerary in one .ics file.\n• Compatible with Google Calendar, Apple Calendar, Outlook, and mobile devices with zero internet permissions required.`,
+      link: { text: 'Explore Festival Schedule', hash: '#schedule' },
+    }
+  }
+
+  // 3. Fallback Response using generic contact note
   return {
-    text: `I couldn't find a direct answer to that query. For assistance, ask at the Registration & Help Desk on event day at the Main Gate.\n\nTry asking about event schedules, hackathon rules, venue, free registration, or prizes!`,
+    text: `I couldn't find a direct answer to that query. For assistance, ask at the Registration & Help Desk on event day at the Main Gate.\n\nTry asking about event schedules, hackathon rules, My Plan, calendar export, venue, free registration, or prizes!`,
     fallback: true,
     link: null,
   }

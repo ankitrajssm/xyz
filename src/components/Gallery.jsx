@@ -79,7 +79,7 @@ function ThematicIllustration({ theme }) {
  * Gallery / Festival Atmosphere Showcase.
  * All atmosphere cards are clickable and open the corresponding event detail view (#/event/<id>).
  */
-export default function Gallery({ onSelectEvent }) {
+export default function Gallery({ onSelectEvent, isPlanned, onTogglePlan }) {
   return (
     <section id="gallery" className="max-w-6xl mx-auto px-4 py-16 sm:py-24 reveal">
       <div className="text-center mb-12">
@@ -90,27 +90,46 @@ export default function Gallery({ onSelectEvent }) {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {GALLERY_HIGHLIGHTS.map(item => (
-          <div
-            key={item.id}
-            role="button"
-            tabIndex={0}
-            onClick={() => onSelectEvent && onSelectEvent(item.eventId)}
-            onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onSelectEvent && onSelectEvent(item.eventId)}
-            className="card p-5 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--teal)]"
-            aria-label={`View event details for ${item.title}`}
-          >
-            <div>
-              <div className="p-3 rounded-lg bg-black/30 border border-white/5 mb-4 group-hover:border-[var(--gold)]/30 transition-colors">
-                <ThematicIllustration theme={item.theme} />
-              </div>
-              <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                <span className="text-[var(--teal)] uppercase tracking-wider">{item.track} Track</span>
-                <span className="opacity-40">Tap to inspect</span>
-              </div>
-              <h3 className="font-bold text-base sm:text-lg text-[var(--cream)] group-hover:text-[var(--gold)] transition-colors">
-                {item.title}
-              </h3>
+        {GALLERY_HIGHLIGHTS.map(item => {
+          const saved = isPlanned ? isPlanned(item.eventId) : false
+
+          return (
+            <div
+              key={item.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => onSelectEvent && onSelectEvent(item.eventId)}
+              onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onSelectEvent && onSelectEvent(item.eventId)}
+              className="card p-5 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--teal)]"
+              aria-label={`View event details for ${item.title}`}
+            >
+              <div>
+                <div className="p-3 rounded-lg bg-black/30 border border-white/5 mb-4 group-hover:border-[var(--gold)]/30 transition-colors">
+                  <ThematicIllustration theme={item.theme} />
+                </div>
+                <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                  <span className="text-[var(--teal)] uppercase tracking-wider">{item.track} Track</span>
+                  <div className="flex items-center gap-2">
+                    <span className="opacity-40 text-[11px] hidden sm:inline">Tap to inspect</span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onTogglePlan && onTogglePlan(item.eventId)
+                      }}
+                      className={`p-1 rounded-full text-xs transition-colors cursor-pointer ${
+                        saved ? 'text-[var(--gold)] font-bold scale-110' : 'text-white/40 hover:text-[var(--gold)]'
+                      }`}
+                      aria-label={saved ? `Remove from My Plan` : `Add to My Plan`}
+                      title={saved ? 'Remove from My Plan' : 'Save to My Plan'}
+                    >
+                      ★
+                    </button>
+                  </div>
+                </div>
+                <h3 className="font-bold text-base sm:text-lg text-[var(--cream)] group-hover:text-[var(--gold)] transition-colors">
+                  {item.title}
+                </h3>
               <p className="text-xs sm:text-sm opacity-70 mt-1 leading-relaxed">
                 {item.desc}
               </p>
@@ -120,8 +139,9 @@ export default function Gallery({ onSelectEvent }) {
               <span>View Problem Statement & Rules</span>
               <span className="group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
             </div>
-          </div>
-        ))}
+                    </div>
+          )
+        })}
       </div>
     </section>
   )

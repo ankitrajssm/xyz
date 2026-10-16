@@ -3,8 +3,9 @@ import { CATS, EVENTS } from '../data/eventData'
 /**
  * Activities Section: 4 Core festival tracks.
  * High polish, clear track descriptions, and direct links to each featured event detail view.
+ * Features quick-add bookmarking into My Plan.
  */
-export default function Activities({ onSelectEvent }) {
+export default function Activities({ onSelectEvent, isPlanned, onTogglePlan }) {
   return (
     <section id="activities" className="max-w-6xl mx-auto px-4 py-16 sm:py-24 reveal">
       {/* Section Header */}
@@ -37,21 +38,42 @@ export default function Activities({ onSelectEvent }) {
                 </p>
 
                 {/* Sub-list of events in this track */}
-                <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
-                  <div className="text-[11px] uppercase tracking-wider text-[var(--teal)] font-bold">
+                <div className="mt-4 pt-4 border-t border-white/10 space-y-1.5">
+                  <div className="text-[11px] uppercase tracking-wider text-[var(--teal)] font-bold mb-2">
                     Featured Events
                   </div>
-                  {trackEvents.map(event => (
-                    <button
-                      key={event.id}
-                      onClick={() => onSelectEvent && onSelectEvent(event.id)}
-                      className="block text-left w-full text-xs opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors truncate py-1 px-1.5 rounded hover:bg-white/5 cursor-pointer"
-                      aria-label={`View rules and details for ${event.title}`}
-                    >
-                      • {event.title}
-                      <span className="text-[10px] opacity-60 ml-1">({event.prize})</span>
-                    </button>
-                  ))}
+                  {trackEvents.map(event => {
+                    const saved = isPlanned ? isPlanned(event.id) : false
+
+                    return (
+                      <div
+                        key={event.id}
+                        className="flex items-center justify-between gap-1 py-1 px-1.5 rounded hover:bg-white/5 transition-colors group/item"
+                      >
+                        <button
+                          onClick={() => onSelectEvent && onSelectEvent(event.id)}
+                          className="text-left flex-1 text-xs opacity-80 hover:opacity-100 hover:text-[var(--gold)] transition-colors truncate cursor-pointer"
+                          aria-label={`View rules and details for ${event.title}`}
+                        >
+                          • {event.title}
+                          <span className="text-[10px] opacity-60 ml-1">({event.prize})</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onTogglePlan && onTogglePlan(event.id)}
+                          className={`p-1 rounded text-xs transition-colors cursor-pointer shrink-0 ${
+                            saved
+                              ? 'text-[var(--gold)] font-bold'
+                              : 'text-white/30 hover:text-[var(--gold)]'
+                          }`}
+                          aria-label={saved ? `Remove ${event.title} from My Plan` : `Add ${event.title} to My Plan`}
+                          title={saved ? 'Remove from My Plan' : 'Save to My Plan'}
+                        >
+                          ★
+                        </button>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
 

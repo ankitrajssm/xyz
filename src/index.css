@@ -6,6 +6,8 @@
   --red: #e5446d;
   --teal: #2ec4b6;
   --cream: #fff4e0;
+  --ambient: #2ec4b6;
+  --ambient-rgb: 46, 196, 182;
 }
 
 html {
@@ -172,6 +174,46 @@ body {
   }
 }
 
+/* Blob drift animations for Ambient Mode - GPU hardware-accelerated transforms only */
+.ambient-blob-1 {
+  animation: blobDriftOne 36s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.ambient-blob-2 {
+  animation: blobDriftTwo 44s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.ambient-blob-3 {
+  animation: blobDriftThree 32s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes blobDriftOne {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(70px, 45px, 0) scale(1.06); }
+  100% { transform: translate3d(-35px, 60px, 0) scale(0.96); }
+}
+
+@keyframes blobDriftTwo {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-60px, -50px, 0) scale(1.05); }
+  100% { transform: translate3d(45px, -35px, 0) scale(0.94); }
+}
+
+@keyframes blobDriftThree {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(55px, -55px, 0) scale(0.95); }
+  100% { transform: translate3d(-45px, 35px, 0) scale(1.05); }
+}
+
+/* Subtle translucent card enhancement when ambient mode is active */
+[data-ambient="true"] .card {
+  background: rgba(255, 244, 224, 0.045);
+  backdrop-filter: blur(8px);
+}
+
 /* Accessible focus styling */
 button:focus-visible,
 a:focus-visible,
@@ -202,8 +244,39 @@ select:focus-visible {
   .drop,
   .marquee-track,
   .pulse-beacon,
-  .animate-in {
+  .animate-in,
+  .ambient-blob-1,
+  .ambient-blob-2,
+  .ambient-blob-3 {
     animation: none !important;
     transform: none !important;
+  }
+}
+
+/* Print Styles for My Plan Itinerary Export */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  /* Hide entire interactive app layout on print */
+  #root > div > *:not(#plan-print-area) {
+    display: none !important;
+  }
+
+  /* Make print area visible and clean on standard A4 */
+  #plan-print-area {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  .no-print {
+    display: none !important;
   }
 }
