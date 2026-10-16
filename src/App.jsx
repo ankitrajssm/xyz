@@ -108,7 +108,7 @@ export default function App() {
         {/* Collapsible FAQ Accordion */}
         <Faq />
 
-        {/* Fictional Academic/Community Patrons Strip */}
+       
         <Sponsors />
       </main>
 

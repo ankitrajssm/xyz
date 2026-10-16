@@ -128,7 +128,7 @@ export const EVENTS = [
     format: 'Open-air amphitheatre festival concert and community evening.',
     duration: '3.5 Hours (06:00 PM to 09:30 PM)',
     teamSize: 'Open to all registered attendees and delegates',
-    eligibility: 'All students holding valid festival badges or registration receipts.',
+    eligibility: 'All students with a valid college ID card.',
     rules: [
       'Gates open at 5:30 PM; entrance requires physical or digital Tarang \'26 pass verification.',
       'College ID card is compulsory for security check-in at the Main Gate.',
