@@ -53,12 +53,10 @@ function ThematicIllustration({ theme }) {
     case 'theatre':
       return (
         <svg viewBox="0 0 120 70" className="w-full h-24" fill="none" stroke="currentColor">
-          {/* Drama / cultural masks */}
           <path d="M35 15 C48 15, 54 26, 54 38 C54 50, 44 58, 35 58 C26 58, 16 50, 16 38 C16 26, 22 15, 35 15 Z" stroke="var(--gold)" strokeWidth="1.5" />
           <circle cx="28" cy="32" r="2" fill="var(--cream)" />
           <circle cx="42" cy="32" r="2" fill="var(--cream)" />
           <path d="M27 44 Q35 50 43 44" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round" />
-          {/* Dance silhouette arc */}
           <path d="M70 18 Q85 10 100 24 T85 54" stroke="var(--red)" strokeWidth="1.5" fill="none" />
           <circle cx="85" cy="20" r="4" fill="var(--teal)" />
         </svg>
@@ -79,28 +77,36 @@ function ThematicIllustration({ theme }) {
 
 /**
  * Gallery / Festival Atmosphere Showcase.
- * Uses 100% inline SVG vector compositions to show atmosphere with zero internet asset dependencies.
+ * All atmosphere cards are clickable and open the corresponding event detail view (#/event/<id>).
  */
-export default function Gallery() {
+export default function Gallery({ onSelectEvent }) {
   return (
     <section id="gallery" className="max-w-6xl mx-auto px-4 py-16 sm:py-24 reveal">
       <div className="text-center mb-12">
         <h2 className="display text-3xl sm:text-5xl text-[var(--gold)]">Festival Atmosphere</h2>
         <p className="text-sm sm:text-base opacity-75 mt-2 max-w-xl mx-auto">
-          From late-night debugging in the labs to open-air stadium concerts and street plays across the lawns.
+          Explore iconic festival highlights. Tap any card below to view full problem statements, rules, and schedules.
         </p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {GALLERY_HIGHLIGHTS.map(item => (
-          <div key={item.id} className="card p-5 flex flex-col justify-between group">
+          <div
+            key={item.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => onSelectEvent && onSelectEvent(item.eventId)}
+            onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && onSelectEvent && onSelectEvent(item.eventId)}
+            className="card p-5 flex flex-col justify-between group cursor-pointer hover:border-[var(--gold)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--teal)]"
+            aria-label={`View event details for ${item.title}`}
+          >
             <div>
               <div className="p-3 rounded-lg bg-black/30 border border-white/5 mb-4 group-hover:border-[var(--gold)]/30 transition-colors">
                 <ThematicIllustration theme={item.theme} />
               </div>
               <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                <span className="text-[var(--teal)] uppercase tracking-wider">{item.track}</span>
-                <span className="opacity-40">Tarang '26</span>
+                <span className="text-[var(--teal)] uppercase tracking-wider">{item.track} Track</span>
+                <span className="opacity-40">Tap to inspect</span>
               </div>
               <h3 className="font-bold text-base sm:text-lg text-[var(--cream)] group-hover:text-[var(--gold)] transition-colors">
                 {item.title}
@@ -108,6 +114,11 @@ export default function Gallery() {
               <p className="text-xs sm:text-sm opacity-70 mt-1 leading-relaxed">
                 {item.desc}
               </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-[var(--gold)] font-bold">
+              <span>View Problem Statement & Rules</span>
+              <span className="group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
             </div>
           </div>
         ))}

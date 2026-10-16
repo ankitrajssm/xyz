@@ -22,7 +22,7 @@ export default function Register({ preSelectedEventTitle }) {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [confirmationData, setConfirmationData] = useState(null)
 
-  // Update selected event if user clicked Register from an event modal
+  // Update selected event if user clicked Register from an event modal or detail view
   useEffect(() => {
     if (preSelectedEventTitle) {
       setFormData(prev => ({ ...prev, event: preSelectedEventTitle }))
@@ -97,25 +97,38 @@ export default function Register({ preSelectedEventTitle }) {
         </p>
       </div>
 
-      {/* "How to participate" 3-step block */}
+      {/* "How to participate" 3-step block with real functional links */}
       <div className="mb-14">
         <div className="text-xs uppercase font-bold tracking-widest text-[var(--teal)] text-center mb-6">
           How To Participate · 3 Simple Steps
         </div>
         <div className="grid sm:grid-cols-3 gap-4">
-          {HOW_TO_PARTICIPATE.map(step => (
-            <div key={step.step} className="card p-5 relative overflow-hidden">
-              <div className="display text-3xl text-[var(--gold)]/80 font-bold mb-2">
-                {step.step}
+          {HOW_TO_PARTICIPATE.map((step, idx) => {
+            const stepLinks = ['#schedule', '#reg-name', '#venue']
+            const linkLabels = ['Browse Timetable →', 'Jump to Form ↓', 'View Main Gate →']
+
+            return (
+              <div key={step.step} className="card p-5 relative overflow-hidden flex flex-col justify-between">
+                <div>
+                  <div className="display text-3xl text-[var(--gold)]/80 font-bold mb-2">
+                    {step.step}
+                  </div>
+                  <h3 className="font-bold text-base text-[var(--cream)] mb-1">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs opacity-70 leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+                <a
+                  href={stepLinks[idx]}
+                  className="mt-3 text-[11px] text-[var(--gold)] font-bold hover:underline inline-block self-start"
+                >
+                  {linkLabels[idx]}
+                </a>
               </div>
-              <h3 className="font-bold text-base text-[var(--cream)] mb-1">
-                {step.title}
-              </h3>
-              <p className="text-xs opacity-70 leading-relaxed">
-                {step.desc}
-              </p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -153,8 +166,8 @@ export default function Register({ preSelectedEventTitle }) {
               <span className="font-medium truncate max-w-[200px]">{confirmationData.college}</span>
             </div>
             <div className="flex justify-between">
-              <span className="opacity-60">Reporting Gate:</span>
-              <span className="font-medium text-[var(--gold)]">Gate 2 Help Desk</span>
+              <span className="opacity-60">Reporting Spot:</span>
+              <span className="font-medium text-[var(--gold)]">Registration & Help Desk (exact spot announced on event day)</span>
             </div>
           </div>
 
@@ -164,7 +177,7 @@ export default function Register({ preSelectedEventTitle }) {
 
           <button
             onClick={resetForm}
-            className="inline-block px-7 py-3 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-sm"
+            className="inline-block px-7 py-3 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-sm cursor-pointer"
           >
             Register Another Person
           </button>
@@ -263,13 +276,13 @@ export default function Register({ preSelectedEventTitle }) {
           {/* Event selection */}
           <div>
             <label htmlFor="reg-event" className="block text-xs font-semibold uppercase tracking-wider text-white/80">
-              Primary Competition Track <span className="text-[var(--red)]">*</span>
+              Event <span className="text-[var(--red)]">*</span>
             </label>
             <select
               id="reg-event"
               value={formData.event}
               onChange={handleChange('event')}
-              className={`${inputClass} text-black bg-white/90`}
+              className={`${inputClass} text-black bg-white/90 cursor-pointer`}
             >
               {EVENTS.map(event => (
                 <option key={event.id} value={event.title}>
@@ -285,7 +298,7 @@ export default function Register({ preSelectedEventTitle }) {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-base mt-2"
+            className="w-full py-3.5 rounded-full font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all text-base mt-2 cursor-pointer shadow-md"
           >
             Complete Free Registration
           </button>

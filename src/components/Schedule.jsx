@@ -3,7 +3,8 @@ import { EVENTS, CATS } from '../data/eventData'
 
 /**
  * Schedule section: Interactive timetable with Day and Track filtering.
- * High priority section: polished, clear typography and quick modal inspection.
+ * Features customizable filters, empty state with filter reset,
+ * and direct links to full event detail view (#/event/<id>).
  */
 export default function Schedule({ onSelectEvent }) {
   const [selectedDay, setSelectedDay] = useState(1)
@@ -17,13 +18,18 @@ export default function Schedule({ onSelectEvent }) {
   const days = [1, 2, 3]
   const categories = ['All', ...CATS.map(c => c.name)]
 
+  const resetFilters = () => {
+    setSelectedDay(1)
+    setSelectedCat('All')
+  }
+
   return (
     <section id="schedule" className="max-w-4xl mx-auto px-4 py-16 sm:py-24 reveal">
       {/* Section Header */}
       <div className="text-center mb-8">
         <h2 className="display text-3xl sm:text-5xl text-[var(--gold)]">Festival Schedule</h2>
         <p className="text-sm sm:text-base opacity-75 mt-2 max-w-xl mx-auto">
-          Filter by day or track to plan your festival timetable. Tap any card for full rules, team sizes, and prize details.
+          Filter by day or track to plan your festival timetable. Tap any card for full rules, team sizes, problem statements, and prize breakdowns.
         </p>
       </div>
 
@@ -84,9 +90,9 @@ export default function Schedule({ onSelectEvent }) {
             <button
               key={event.id}
               role="listitem"
-              onClick={() => onSelectEvent(event)}
+              onClick={() => onSelectEvent(event.id)}
               className="card w-full text-left p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group cursor-pointer"
-              aria-label={`View details for ${event.title} at ${event.time}`}
+              aria-label={`View full details for ${event.title} on Day ${event.day} at ${event.time}`}
             >
               {/* Time & Title */}
               <div className="flex items-start sm:items-center gap-4">
@@ -123,13 +129,21 @@ export default function Schedule({ onSelectEvent }) {
             </button>
           ))
         ) : (
-          <div className="card p-8 text-center opacity-70">
-            <p className="text-sm">
-              No <span className="font-semibold text-[var(--gold)]">{selectedCat}</span> events on Day {selectedDay}.
+          /* Custom Empty State for Zero Filter Matches */
+          <div className="card p-8 sm:p-10 text-center border-dashed border-white/20">
+            <div className="text-4xl mb-3" aria-hidden="true">🔎</div>
+            <p className="text-base font-semibold text-[var(--cream)]">
+              No <span className="text-[var(--gold)]">{selectedCat}</span> events on Day {selectedDay}.
             </p>
-            <p className="text-xs opacity-60 mt-1">
-              Select another track or switch to Day 1, 2, or 3.
+            <p className="text-xs sm:text-sm opacity-65 mt-1.5 max-w-sm mx-auto">
+              There are no competitions matching this exact filter combination. Try selecting another track or day.
             </p>
+            <button
+              onClick={resetFilters}
+              className="mt-4 px-5 py-2 rounded-full text-xs font-bold bg-[var(--gold)] text-[var(--ink)] hover:brightness-105 transition-all shadow-sm"
+            >
+              Reset to All Events
+            </button>
           </div>
         )}
       </div>

@@ -4,6 +4,7 @@ import { EVENT } from '../data/eventData'
 const NAV_ITEMS = [
   { id: 'schedule', label: 'Schedule' },
   { id: 'activities', label: 'Activities' },
+  { id: 'rules', label: 'Rules' },
   { id: 'venue', label: 'Venue' },
   { id: 'gallery', label: 'Highlights' },
   { id: 'register', label: 'Register' },
@@ -34,7 +35,7 @@ export default function Navbar() {
 
         {/* Mobile Hamburger Button */}
         <button
-          className="sm:hidden p-2 rounded-lg text-xl border border-white/20 hover:border-[var(--gold)] text-[var(--cream)]"
+          className="sm:hidden p-2 rounded-lg text-xl border border-white/20 hover:border-[var(--gold)] text-[var(--cream)] cursor-pointer"
           aria-expanded={mobileMenuOpen}
           aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           onClick={toggleMenu}
@@ -51,12 +52,12 @@ export default function Navbar() {
         </button>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden sm:flex items-center gap-6">
+        <div className="hidden sm:flex items-center gap-5 md:gap-6">
           {NAV_ITEMS.map(item => (
             <a
               key={item.id}
               href={`#${item.id}`}
-              className="text-sm font-medium opacity-85 hover:opacity-100 hover:text-[var(--gold)] transition-colors py-1"
+              className="text-xs md:text-sm font-medium opacity-85 hover:opacity-100 hover:text-[var(--gold)] transition-colors py-1"
             >
               {item.label}
             </a>

@@ -2,30 +2,30 @@ import { EVENT } from '../data/eventData'
 
 const VENUE_TIPS = [
   {
-    icon: '🚆',
-    title: 'Transit & Arrival',
-    desc: 'Local taxis, auto-rickshaws, and express buses operate frequently from the nearest railway station directly to the campus main gate.',
+    icon: '🪪',
+    title: 'Carry College ID',
+    desc: 'A valid physical college photo ID card is mandatory for campus entry and participation in all events.',
   },
   {
-    icon: '🅿️',
-    title: 'Free Parking',
-    desc: 'Dedicated free parking available for two-wheelers and four-wheelers at Gate 2. Follow security volunteer marshals upon arrival.',
+    icon: '⏱️',
+    title: 'Reach 30 Minutes Early',
+    desc: 'Report to your respective event venue at least 30 minutes prior to scheduled start time for attendance and briefings.',
   },
   {
-    icon: '🍛',
-    title: 'Food Court & Cafes',
-    desc: 'Campus cafeteria and open-air food stalls operate from 8:00 AM to 10:00 PM with vegetarian and quick-bite options.',
+    icon: '💻',
+    title: 'Laptops & Chargers Responsibility',
+    desc: 'Laptops, chargers, adapters, and personal equipment are your own responsibility throughout the festival.',
   },
   {
-    icon: '🏠',
-    title: 'Hostel Accommodation',
-    desc: 'Outstation participants registered with festival passes will be allocated hostel beds upon reporting to the Gate 2 help desk.',
+    icon: '📢',
+    title: 'Official Updates',
+    desc: 'Follow the organisers\' official channels for updates on timetable notices and announcements.',
   },
 ]
 
 /**
- * Venue section: Interactive SVG campus guide and practical travel checklist.
- * High priority section: polished layout, clear accessibility labels.
+ * Venue section: Interactive SVG campus guide and practical generic tips.
+ * Updated to use Main Gate check-in and generic festival tips only.
  */
 export default function Venue() {
   return (
@@ -46,14 +46,14 @@ export default function Venue() {
               <span className="w-2 h-2 rounded-full bg-[var(--teal)] inline-block" />
               Interactive Campus Blueprint
             </span>
-            <span className="opacity-60 text-[11px]">Gate 2 Entry</span>
+            <span className="opacity-60 text-[11px]">Main Gate Entry</span>
           </div>
 
           <svg
             viewBox="0 0 460 300"
             className="w-full h-auto rounded-lg border border-white/10 bg-[#0e0824]"
             role="img"
-            aria-label="Map of the festival campus showing Tech Block, Open Air Theatre, Main Stage and Gate 2"
+            aria-label="Map of the festival campus showing Tech Block, Open Air Theatre, Main Stage and Main Gate"
           >
             {/* Campus connecting pathways */}
             <path
@@ -98,16 +98,16 @@ export default function Venue() {
             <circle className="pulse-beacon" cx="230" cy="150" r="22" fill="none" stroke="var(--gold)" strokeWidth="2" />
             <text x="180" y="180" fill="var(--cream)" fontSize="11" fontWeight="bold">Main Stage</text>
 
-            {/* Gate 2 Helpdesk */}
+            {/* Main Gate Helpdesk */}
             <circle cx="45" cy="260" r="7" fill="var(--teal)" />
-            <text x="60" y="264" fill="var(--cream)" fontSize="10">Gate 2 Entry / Check-in</text>
+            <text x="60" y="264" fill="var(--cream)" fontSize="10">Main Gate Check-in</text>
           </svg>
           <div className="text-[11px] opacity-60 text-center mt-2">
             Volunteers and helpdesks are positioned at each marked zone.
           </div>
         </div>
 
-        {/* Practical Arrival and Logistics Info */}
+        {/* Practical Arrival and Guidelines Tips */}
         <div className="lg:col-span-6 space-y-3">
           {VENUE_TIPS.map(tip => (
             <div key={tip.title} className="card p-4 flex gap-4 items-start">
